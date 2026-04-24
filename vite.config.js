@@ -7,38 +7,58 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+
       includeAssets: [
-        'favicon.svg',
-        'apple-touch-icon.png',
-        'masked-icon.svg'
+        'favicon.ico',
+        'images/events/default.jpg'
       ],
+
       manifest: {
         name: 'Alumni Career Hub',
-        short_name: 'AlumniHub',
-        description: 'Ateneo de Davao University Alumni Career Hub PWA',
-        theme_color: '#0f3d91',
-        background_color: '#f5f8ff',
+        short_name: 'Alumni Hub',
+        description: 'Ateneo de Davao Alumni Career Hub',
+        theme_color: '#1f3c97',
+        background_color: '#1f3c97',
         display: 'standalone',
-        orientation: 'portrait',
-        scope: '/',
         start_url: '/',
+        scope: '/',
         icons: [
           {
-            src: '/icons/pwa-192x192.png',
+            src: '/pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/icons/pwa-512x512.png',
+            src: '/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
+          }
+        ]
+      },
+
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24
+              }
+            }
           },
           {
-            src: '/icons/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable'
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'image-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
           }
         ]
       }

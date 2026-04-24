@@ -1,25 +1,207 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './EventDetailsPage.css';
+import api from '../../api/api';
+import adduLogo from '../../assets/images/addu-logo.png';
+import {
+  FaHome,
+  FaUser,
+  FaCalendarAlt,
+  FaNewspaper,
+  FaBriefcase,
+  FaHeart,
+  FaFileAlt,
+  FaCog
+} from 'react-icons/fa';
 
 function EventDetailsPage() {
-  const eventDetails = {
-    title: 'AdDU Alumni Grand Homecoming 2026',
-    status: 'ONSITE',
-    attendees: '348 going',
-    date: 'March 15, 2026',
-    time: '9:00 AM - 5:00 PM',
-    description:
-      'Reconnect with batchmates and celebrate decades of Atenean excellence. Featuring a mass, campus tour, cultural show, and grand dinner.',
-    venueTitle: 'Finster Auditorium',
-    venueAddress:
-      'Ateneo de Davao University, E. Jacinto Street, Davao City, 8000 Philippines'
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [eventDetails, setEventDetails] = useState(null);
+  const [message, setMessage] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+  useEffect(() => {
+    fetchEventDetails();
+  }, [id]);
+
+  const fetchEventDetails = async () => {
+    try {
+      const response = await api.get(`/events/${id}`);
+      setEventDetails(response.data);
+    } catch (error) {
+      console.log('Error fetching event details:', error);
+    }
   };
+
+  const handleRegister = async () => {
+    const storedUserRaw = localStorage.getItem('user');
+
+    if (!storedUserRaw) {
+      navigate('/login');
+      return;
+    }
+
+    const parsedUser = JSON.parse(storedUserRaw);
+
+    try {
+      setIsRegistering(true);
+      setMessage('');
+
+      const response = await api.post('/registrations', {
+        user_id: parsedUser.id,
+        event_id: eventDetails.id
+      });
+
+      setMessage(response.data.message);
+    } catch (error) {
+      if (error.response?.data?.message) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage('Registration failed');
+      }
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'U';
+
+    return name
+      .split(' ')
+      .map((part) => part[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  };
+
+  const sidebarMenu = [
+    { title: 'Home', icon: <FaHome />, action: () => navigate('/home') },
+    { title: 'News & Updates', icon: <FaNewspaper />, action: () => navigate('/news-updates') },
+    { title: 'My Profile', icon: <FaUser />, action: () => navigate('/profile') },
+    { title: 'Academic Records', icon: '🎓', action: () => navigate('/academic-records') },
+   { title: 'Networking & Events', icon: <FaCalendarAlt />, action: () => navigate('/events') },
+    { title: 'My Registered Events', icon: '🗓', action: () => navigate('/my-registrations') },
+    { title: 'Admin Events', icon: '⚙', action: () => navigate('/admin/events') }
+  ];
+
+  if (!eventDetails) {
+    return <div className="page event-details-page">Loading event...</div>;
+  }
 
   return (
     <div className="page event-details-page">
+      {isSidebarOpen && (
+        <>
+          <div
+            className="sidebar-backdrop"
+            onClick={() => setIsSidebarOpen(false)}
+          ></div>
+
+          <aside className="page-sidebar">
+     
+
+            <div className="sidebar-header">
+              <div className="sidebar-brand">
+                <div className="sidebar-logo">
+                  <img src={adduLogo} alt="Ateneo de Davao University logo" />
+                </div>
+
+                <div className="sidebar-brand-text">
+                  <h3>Alumni Portal</h3>
+                  <p>Ateneo de Davao</p>
+                </div>
+              </div>
+
+              <button
+                className="sidebar-close-btn"
+                type="button"
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="sidebar-divider"></div>
+
+            <nav className="sidebar-menu">
+              {sidebarMenu.map((item) => (
+                <button
+                  key={item.title}
+                  type="button"
+                  className={
+                    item.title === 'Networking & Events'
+                      ? 'sidebar-menu-item active'
+                      : 'sidebar-menu-item'
+                  }
+                  onClick={() => {
+                    item.action();
+                    setIsSidebarOpen(false);
+                  }}
+                >
+                  <span className="sidebar-menu-icon">{item.icon}</span>
+                  <span className="sidebar-menu-text">{item.title}</span>
+                  {item.title === 'Networking & Events' && (
+                    <span className="sidebar-active-dot"></span>
+                  )}
+                </button>
+              ))}
+            </nav>
+
+            <div className="sidebar-footer">
+              <div className="sidebar-user-card">
+                <div className="sidebar-user-avatar">
+                  {getInitials(storedUser?.name)}
+                </div>
+
+                <div className="sidebar-user-info">
+                  <h4>{storedUser?.name || 'User'}</h4>
+                  <p>Alumni</p>
+                </div>
+              </div>
+
+              <div className="sidebar-footer-actions">
+                <button
+                  type="button"
+                  className="sidebar-footer-btn"
+                  onClick={() => {
+                    navigate('/profile');
+                    setIsSidebarOpen(false);
+                  }}
+                >
+                  ⚙ Settings
+                </button>
+
+                <button
+                  type="button"
+                  className="sidebar-footer-btn"
+                  onClick={handleLogout}
+                >
+                  ⇥ Sign Out
+                </button>
+              </div>
+            </div>
+          </aside>
+        </>
+      )}
+
       <div className="event-details-header">
         <div className="event-details-topbar">
-          <button className="details-icon-button" type="button">
-            ←
+          <button
+            className="details-icon-button"
+            type="button"
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            ☰
           </button>
 
           <h1>Networking &amp; Events</h1>
@@ -28,20 +210,26 @@ function EventDetailsPage() {
 
       <div className="event-details-content">
         <section className="event-hero-card">
-          <div className="event-hero-image">
-            <div className="event-hero-badges">
-              <span className="hero-chip primary">{eventDetails.status}</span>
-              <span className="hero-chip muted">{eventDetails.attendees}</span>
-            </div>
-
-            <button className="hero-close-button" type="button">
+          <div
+            className="event-hero-image"
+            style={{
+              backgroundImage: `linear-gradient(rgba(21, 41, 104, 0.16), rgba(21, 41, 104, 0.48)), url(${eventDetails.image_url || '/images/events/default.jpg'})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          >
+            <button
+              className="hero-close-button"
+              type="button"
+              onClick={() => navigate('/events')}
+            >
               ✕
             </button>
 
             <div className="event-hero-overlay">
               <h2>{eventDetails.title}</h2>
               <p>
-                {eventDetails.date} &nbsp; • &nbsp; {eventDetails.time}
+                {eventDetails.event_date} &nbsp; • &nbsp; {eventDetails.event_time}
               </p>
             </div>
           </div>
@@ -73,8 +261,8 @@ function EventDetailsPage() {
           </div>
 
           <div className="venue-card">
-            <h4>{eventDetails.venueTitle}</h4>
-            <p>{eventDetails.venueAddress}</p>
+            <h4>{eventDetails.location}</h4>
+            <p>{eventDetails.location}</p>
           </div>
         </section>
 
@@ -85,20 +273,35 @@ function EventDetailsPage() {
           </div>
 
           <div className="map-preview-card">
-            <div className="map-image">
-              <div className="map-pin">📍</div>
-            </div>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(eventDetails.location)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(eventDetails.location)}&zoom=15&size=600x300&markers=color:red|${encodeURIComponent(eventDetails.location)}`}
+                alt="Map Preview"
+                className="map-preview-image"
+              />
+            </a>
 
             <div className="map-location-bar">
-              <span>{eventDetails.venueTitle}</span>
+              <span>{eventDetails.location}</span>
             </div>
           </div>
         </section>
+
+        {message && <p className="registration-message">{message}</p>}
       </div>
 
       <div className="event-register-bar">
-        <button className="register-now-button" type="button">
-          Register Now ›
+        <button
+          className="register-now-button"
+          type="button"
+          onClick={handleRegister}
+          disabled={isRegistering}
+        >
+          {isRegistering ? 'Registering...' : 'Register Now ›'}
         </button>
       </div>
     </div>

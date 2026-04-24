@@ -1,0 +1,43 @@
+.job-details-page {
+  background: #f5f7ff;
+  min-height: 100vh;
+}
+
+.job-details-header {
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  padding: 20px;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+}
+
+.job-details-header h1 {
+  color: white;
+  margin-top: 16px;
+  font-size: 1.5rem;
+}
+
+.job-details-content {
+  padding: 16px;
+}
+
+.job-details-card {
+  background: white;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 10px 24px rgba(17, 37, 98, 0.08);
+}
+
+.job-details-card p {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.job-details-card button {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--color-primary-dark);
+  color: white;
+  font-weight: 700;
+}

@@ -1,0 +1,121 @@
+.news-details-page {
+  background: #f5f7ff;
+  min-height: 100vh;
+}
+
+.news-details-header {
+  background: linear-gradient(
+    180deg,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+  color: #ffffff;
+  padding: 20px;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
+}
+
+.news-back-button {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  margin-bottom: 18px;
+}
+
+.news-details-type {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.news-details-header h1 {
+  color: #ffffff;
+  font-size: 1.55rem;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.news-details-header p {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.9rem;
+}
+
+.news-details-content {
+  padding: 16px;
+}
+
+.news-details-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 12px 24px rgba(17, 37, 98, 0.08);
+  margin-bottom: 18px;
+}
+
+.news-details-card p {
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  font-size: 0.98rem;
+  margin-bottom: 18px;
+}
+
+.news-details-primary-button {
+  width: 100%;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--color-primary-dark);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.related-events-section h2 {
+  color: var(--color-primary-dark);
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+}
+
+.related-event-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgba(17, 37, 98, 0.08);
+  margin-bottom: 14px;
+}
+
+.related-event-image {
+  height: 130px;
+  background-size: cover;
+  background-position: center;
+}
+
+.related-event-body {
+  padding: 14px;
+}
+
+.related-event-body h3 {
+  color: var(--color-primary-dark);
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+
+.related-event-body p {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.related-event-body button {
+  width: 100%;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--color-primary-dark);
+  color: #ffffff;
+  font-weight: 700;
+  margin-top: 8px;
+}
